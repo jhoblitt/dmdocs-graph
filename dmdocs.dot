@@ -1,0 +1,212 @@
+digraph overlay_current
+{
+  dpi=100
+//  size="16,12!"
+  ranksep=1.5
+//  nodesep=1.5
+  rankdir=TB
+  overlap=false
+  clusterrank=local
+  compound=true
+  newrank=true
+
+  node [shape=ellipse fontsize=10 style=filled fillcolor=white]
+
+  // key
+  // https://stackoverflow.com/questions/3499056/making-a-legend-key-in-graphviz
+  subgraph cluster_key { 
+    label = "Legend";
+    node [shape=plaintext]
+    key [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+      <tr><td align="right" port="i1">requirements</td></tr>
+      <tr><td align="right" port="i2">values</td></tr>
+      <tr><td align="right" port="i3">requirements ???</td></tr>
+      <tr><td align="right" port="i4">explination</td></tr>
+      </table>>]
+    key2 [label=<<table border="0" cellpadding="2" cellspacing="0" cellborder="0">
+      <tr><td port="i1">&nbsp;</td></tr>
+      <tr><td port="i2">&nbsp;</td></tr>
+      <tr><td port="i3">&nbsp;</td></tr>
+      <tr><td port="i4">&nbsp;</td></tr>
+      </table>>]
+    key:i1:e -> key2:i1:w [color=blue]
+    key:i2:e -> key2:i2:w [color=green]
+    key:i3:e -> key2:i3:w [color=red,style=dotted]
+    key:i4:e -> key2:i4:w
+    { rank=same key key2 }
+  }
+
+  color=gray
+  fontsize=24
+  style=bold
+
+  // collection 2511
+  // following the default sort ordering
+  // https://docushare.lsstcorp.org/docushare/dsweb/View/Collection-2511
+
+  ldm230 [label="LDM-230\nAutomated Operation"]
+  ldm151 [label="LDM-151\nApplications Design"]
+  ldm134 [label="LDM-134\nApplications UML"]
+  ldm140 [label="LDM-140\nCompute Sizing Explanation"]
+  ldm138 [label="LDM-138\nCompute Sizing Model"]
+  ldm153 [label="LDM-153\nDatabase Baseline Schema"]
+  ldm135 [label="LDM-135\nDatabase Design"]
+  ldm129 [label="LDM-129\nInfrastructure Design"]
+  ldm152 [label="LDM-152\nMiddleware Design"]
+  ldm146 [label="LDM-146\nMiddleware UML"]
+  ldm240 [label="LDM-240\nWBS"]
+  ldm244 [label="LDM-244\nScience User Interface UML"]
+  ldm139 [label="LDM-139\nStorage Sizing and I/O Explanation"]
+  ldm141 [label="LDM-141\nStorage Sizing and I/O Model"]
+  ldm131 [label="LDM-131\nSUI Conceptual Design"]
+  ldm148 [label="LDM-148\nSystem Design"]
+  ldm133 [label="LDM-133\nUML Domain Model"]
+  ldm132 [label="LDM-132\nWBS Dictionary"]
+  ldm156 [label="LDM-156\nMoving Object Pipeline System Design"]
+  ldm142 [label="LDM-142\nNetwork Sizing Model"]
+  ldm143 [label="LDM-143\nInfrastructure Estimation Explanation"]
+  ldm144 [label="LDM-144\nInfrastructure Estimation Model"]
+  lse81 [label="LSE-81\nScience and Project Sizing Inputs"]
+  lse82 [label="LSE-82\nScience and Project Sizing Inputs Explanation"]
+
+  // presumably going into collection 2511
+  basedc [label="Base DC"]
+
+  // external to collection 2511
+  {
+    node [color="purple"]
+
+    lse61
+    lse68
+    lse69
+    lse75 [label="LSE-75\nControl System Interfaces between the Telescope and Data Management"]
+    lse77 [label="LSE-77\nInfrastructure Interfaces Between Data Management and the Base Facility"]
+    lse78 [label="LSE-78\nObservatory Network Design"]
+    lse99 [label="LSE-99\nCyber-security Plan"]
+    lse163
+    ldm130 [label="LDM-130\nFunctional Requirements for Science User Interface and Tools"]
+  }
+
+  subgraph cluster_applications {
+    label="applications"
+
+    ldm151 -> ldm134
+    { rank=same ldm151 ldm134 }
+  }
+
+  subgraph cluster_database {
+    label="database"
+
+    ldm135 -> ldm153
+    { rank=same ldm153 ldm135 }
+  }
+
+  subgraph cluster_middleware {
+    label="middleware"
+
+    ldm152 -> ldm146
+    { rank=same ldm152 ldm146 }
+  }
+
+  subgraph cluster_compute {
+    label="compute"
+
+    ldm138 -> ldm140
+    { rank=same ldm138 ldm140 }
+  }
+
+  subgraph cluster_storage {
+    label="storage"
+
+    ldm141 -> ldm139
+    { rank=same ldm141 ldm139 }
+  }
+
+  subgraph cluster_sui {
+    label="SUI"
+
+    ldm131 -> ldm244
+    { rank=same ldm131 ldm244 }
+  }
+
+  subgraph cluster_infrastructure {
+    label="infrastructure"
+
+    ldm144 -> ldm143
+    { rank=same ldm144 ldm143 }
+  }
+
+  subgraph cluster_inputs {
+    label="inputs"
+
+    lse81 -> lse82
+    { rank=same lse81 lse82 }
+  }
+
+  subgraph cluster_wbs {
+    label="wbs"
+
+    ldm240 -> ldm132
+    { rank=same ldm240 ldm132 }
+  }
+
+  // edges between subgraphs
+  // https://stackoverflow.com/questions/2012036/graphviz-how-to-connect-subgraphs
+
+  edge [color=blue]
+
+  lse61 -> ldm148 [color="green"]
+  lse68 -> ldm148 [color="green"]
+  lse69 -> ldm148 [color="green"]
+  lse75 -> ldm152 [lhead=cluster_middleware]
+  lse77 -> ldm129 [color="green"]
+  lse77 -> ldm144 [lhead=cluster_infrastructure]
+  lse78 -> ldm129 [color="green"]
+  lse78 -> ldm148 [color="green"]
+  lse81 -> ldm140 [lhead=cluster_compute]
+  lse81 -> ldm139 [lhead=cluster_storage]
+  lse82 -> ldm139 [lhead=cluster_storage]
+  lse99 -> lse77
+  lse99 -> basedc
+  lse99 -> ldm129 [color="green"]
+  lse99 -> ldm152 [lhead=cluster_middleware]
+  lse99 -> ldm148 [color="green"]
+  lse163 -> ldm148 [color="green"]
+  ldm129 -> ldm148 [color="green"]
+  ldm129 -> ldm143 [label="ldm144 or ldm129 authoritative for 129 section 11?", lhead=cluster_infrastructure]
+  ldm130 -> ldm131 [lhead=cluster_sui]
+  ldm133 -> ldm148 [color="green"]
+  ldm134 -> ldm148 [color="green"]
+  ldm135 -> ldm148 [color="green", ltail=cluster_database]
+  ldm138 -> ldm144 [ltail=cluster_compute, lhead=cluster_infrastructure]
+  ldm139 -> ldm148 [color="green", ltail=cluster_storage]
+  ldm141 -> ldm144 [ltail=cluster_storage, lhead=cluster_infrastructure]
+  ldm141 -> ldm148 [color="green", ltail=cluster_storage]
+  ldm142 -> lse77
+  ldm142 -> lse78
+  ldm142 -> ldm144 [lhead=cluster_infrastructure]
+  ldm144 -> basedc [ltail=cluster_infrastructure]
+  ldm144 -> lse77 [color="green", ltail=cluster_infrastructure]
+  ldm143 -> ldm148 [color="green"]
+  ldm144 -> ldm148 [color="green"]
+  ldm146 -> ldm148 [color="green"]
+  ldm151 -> ldm148 [color="green"]
+  ldm152 -> ldm148 [color="green", ltail=cluster_middleware]
+  ldm230 -> ldm148 [color="green"]
+  ldm230 -> ldm152 [lhead=cluster_middleware]
+
+  // suspected but unknown
+  basedc -> ldm129 [color="red", style="dotted"]
+  ldm129 -> basedc [color="red", style="dotted"]
+
+  ldm135 -> ldm141 [color="red", style="dotted", ltail=cluster_database, lhead=cluster_storage]
+  ldm135 -> ldm138 [color="red", style="dotted", ltail=cluster_database, lhead=cluster_compute]
+
+  ldm151 -> ldm141 [color="red", style="dotted", ltail=cluster_applications, lhead=cluster_storage]
+  ldm151 -> ldm138 [color="red", style="dotted", ltail=cluster_applications, lhead=cluster_compute]
+
+  ldm152 -> ldm143 [label="replicator hardware?",color="red", style="dotted",lhead=cluster_infrastructure]
+
+  ldm156 -> ldm141 [color="red", style="dotted",lhead=cluster_storage]
+  ldm156 -> ldm138 [color="red", style="dotted",lhead=cluster_compute]
+}
