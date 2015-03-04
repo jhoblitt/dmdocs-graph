@@ -61,7 +61,8 @@ end # class Docuspider
 
 def process_doc(spider, handle, page, graph)
   puts ">>> processing #{handle}"
-  puts "\tcontent-type: #{page.response['content-type']}"
+  content = page.response['content-type']
+  puts "\tcontent-type: #{content}"
   
   file = Tempfile.new('foo')
   file.write(page.content)
@@ -69,8 +70,8 @@ def process_doc(spider, handle, page, graph)
 
   puts "\tfilemagic: #{magic}"
 
-  text = case magic
-  when /Word/
+  text = case content
+  when %r{application/msword}, %r{application/vnd.openxmlformats-officedocument.wordprocessingml.document}
     `soffice --headless --convert-to txt:Text #{file.path} --outdir /tmp`
     text_path = "#{file.path}.txt"
     begin
@@ -81,7 +82,7 @@ def process_doc(spider, handle, page, graph)
       return
     end
     output
-  when /PDF/ 
+  when %r{application/pdf}
     `pdf2txt #{file.path}`
   else
     puts "\n\n\t### unsupported format ###\n\n\n"
