@@ -1,6 +1,6 @@
 TEMPFILE := $(shell mktemp -u)
 
-all: images/dmdocs.png
+all: images/dmdocs.png images/collection-2511.png
 
 images/%.png : %.dot
 	unflatten $< -o ${TEMPFILE} -l 10 -c 10
