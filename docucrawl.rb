@@ -106,8 +106,10 @@ def process_doc(spider, handle, page, graph)
 
     # create an edge between the current doc and the ref
     graph.add_edges(handle, ref)
-    # add the ref to the crawl queue
-    spider.queue_handle ref
+    if @recurse
+      # add the ref to the crawl queue
+      spider.queue_handle ref
+    end
   end
 end
 
@@ -125,6 +127,8 @@ docs.each_pair do |k,v|
   spider.queue_handle k
   graph.add_nodes(k, :label => "#{k}\n#{v}")
 end
+
+@recurse = false
 
 spider.crawl do |spider, handle, page|
   process_doc spider, handle, page, graph
