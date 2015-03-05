@@ -6,6 +6,29 @@ require 'tempfile'
 require 'filemagic'
 require 'yaml'
 require 'graphviz'
+require 'docopt'
+
+doc = <<DOCOPT
+#{__FILE__}
+
+Usage:
+  #{__FILE__}
+  #{__FILE__} --recursive
+  #{__FILE__} -h | --help
+
+Options:
+  --recursive   Recursively crawl document handles.
+  -h --help     Show this screen.
+
+DOCOPT
+
+@options = {}
+begin
+  @options = Docopt::docopt(doc)
+rescue Docopt::Exit => e
+  puts e.message
+  exit 1
+end
 
 class Docuspider
   def initialize(
@@ -122,7 +145,7 @@ def process_doc(spider, handle, page, graph)
 
     # create an edge between the current doc and the ref
     graph.add_edges(handle, ref)
-    if @recurse
+    if @options['--recursive']
       # add the ref to the crawl queue
       spider.queue_handle ref
     end
@@ -143,8 +166,6 @@ docs.each_pair do |k,v|
   spider.queue_handle k
   graph.add_nodes(k, :label => "#{k}\n#{v}")
 end
-
-@recurse = false
 
 spider.crawl do |spider, handle, page|
   process_doc spider, handle, page, graph
