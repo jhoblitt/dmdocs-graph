@@ -122,6 +122,19 @@ def process_doc(spider, handle, page, graph)
     output = `pdf2txt #{file.path}.pdf`
     File.unlink "#{file.path}.pdf"
     output
+  when %r{application/rtf}, %r{application/octet-stream}, %r{text/plain}
+    page.content
+  when %r{text/html}
+    # docushare returns http 200 status + an html formatted error message for
+    # documents which access is denied.  A content-type of text/html usually
+    # means an auth problem but there are some html docs in the store, Eg.
+    # Document-7721, so we can not assume an html doc body indicates an error.
+    if page.content =~ /Not Authorized/
+      puts "\n\n\t### Not Authorized ###\n\n\n"
+      return
+    else
+      page.content
+    end
   else
     puts "\n\n\t### unsupported format ###\n\n\n"
     return
