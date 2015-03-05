@@ -107,16 +107,23 @@ def process_doc(spider, handle, page, graph)
     output
   when %r{application/pdf}
     `pdf2txt #{file.path}`
-  when %r{application/vnd.ms-excel}, %r{application/vnd.openxmlformats-officedocument.spreadsheetml.sheet}
-    # libreoffice will fail to convert a spreadsheet directly to txt, Eg.
+  when
+    %r{application/vnd.ms-excel},
+    %r{application/vnd.openxmlformats-officedocument.spreadsheetml.sheet},
+    %r{application/vnd.ms-powerpoint}
+
+    # libreoffice will fail to convert a spreadsheet or powerpoint presentation
+    # directly to txt, Eg.
     # soffice --headless --convert-to txt:Text <spreadsheet>
     #
-    # and when converting it to csv, it will only convert the first sheet in the workbook, Eg.
-    # soffice --headless --convert-to csv <spreadsheet>
+    # and when converting a spreadsheet to csv, it will only convert the first
+    # sheet in the workbook, Eg.  soffice --headless --convert-to csv
+    # <spreadsheet>
     #
     # the ruby spreedsheet gem appears to only work with Excel ~ 2003
     #
-    # it's a bit rediculous but we're converting spreadsheet -> pdf -> txt
+    # it's a bit rediculous but we're converting spreadsheet -> pdf -> txt or
+    # presentation -> pdf -> txt
     `soffice --headless --convert-to pdf #{file.path} --outdir /tmp`
     text_path = "#{file.path}.pdf"
     output = `pdf2txt #{file.path}.pdf`
