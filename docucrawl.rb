@@ -12,13 +12,14 @@ doc = <<DOCOPT
 #{__FILE__}
 
 Usage:
-  #{__FILE__}
-  #{__FILE__} --recursive
+  #{__FILE__} --seed <filename> --output <filename> [--recursive]
   #{__FILE__} -h | --help
 
 Options:
-  --recursive   Recursively crawl document handles.
-  -h --help     Show this screen.
+  --seed=<filename>     YAML file of document handles and descriptions.
+  --output=<filename>   File to write Graphviz `dot` output to.
+  --recursive           Recursively crawl document handles.
+  -h --help             Show this screen.
 
 DOCOPT
 
@@ -29,6 +30,12 @@ rescue Docopt::Exit => e
   puts e.message
   exit 1
 end
+
+unless File.exists? @options['--seed']
+  puts "<filename> (--seed #{@options['--seed']}) does not exist"
+  exit 1
+end
+
 
 class Docuspider
   def initialize(
@@ -180,7 +187,7 @@ spider = Docuspider.new(
 
 graph = GraphViz.new( :G, :type => :digraph )
 
-docs = YAML.load_file("collection-2511.yaml")
+docs = YAML.load_file(@options['--seed'])
 
 docs.each_pair do |k,v|
   spider.queue_handle k
@@ -192,4 +199,4 @@ spider.crawl do |spider, handle, page|
 end
 
 # generate graphviz dot file
-graph.output( :dot => "collection-2511.dot" )
+graph.output( :dot => @options['--output'] )
